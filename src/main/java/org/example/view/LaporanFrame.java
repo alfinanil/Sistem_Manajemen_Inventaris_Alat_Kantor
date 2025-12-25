@@ -52,8 +52,20 @@ public class LaporanFrame extends JFrame {
         panel.setBorder(new EmptyBorder(15, 25, 15, 25));
         panel.setPreferredSize(new Dimension(0, 70));
 
+        // Panel kiri untuk judul
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         leftPanel.setBackground(ColorPalette.PRIMARY_COLOR);
+
+        JLabel titleLabel = new JLabel("  LAPORAN AKTIVITAS");
+        titleLabel.setFont(ColorPalette.FONT_HEADER);
+        titleLabel.setForeground(ColorPalette.TEXT_WHITE);
+
+        leftPanel.add(titleLabel);
+        panel.add(leftPanel, BorderLayout.WEST);
+
+        // Panel kanan untuk button kembali
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        rightPanel.setBackground(ColorPalette.PRIMARY_COLOR);
 
         JButton btnBack = new JButton("⬅ Kembali");
         btnBack.setFont(ColorPalette.FONT_REGULAR);
@@ -67,13 +79,8 @@ public class LaporanFrame extends JFrame {
             dispose();
         });
 
-        JLabel titleLabel = new JLabel("  LAPORAN AKTIVITAS");
-        titleLabel.setFont(ColorPalette.FONT_HEADER);
-        titleLabel.setForeground(ColorPalette.TEXT_WHITE);
-
-        leftPanel.add(btnBack);
-        leftPanel.add(titleLabel);
-        panel.add(leftPanel, BorderLayout.WEST);
+        rightPanel.add(btnBack);
+        panel.add(rightPanel, BorderLayout.EAST);
 
         return panel;
     }
@@ -95,19 +102,38 @@ public class LaporanFrame extends JFrame {
 
         table = new JTable(tableModel);
         table.setFont(ColorPalette.FONT_REGULAR);
-        table.setRowHeight(30);
-        table.getTableHeader().setFont(ColorPalette.FONT_SUBHEADER);
-        table.getTableHeader().setBackground(ColorPalette.PRIMARY_COLOR);
-        table.getTableHeader().setForeground(ColorPalette.TEXT_WHITE);
+        table.setRowHeight(35);
+        table.setShowGrid(true);
+        table.setGridColor(new Color(220, 220, 220));
+        table.setBackground(Color.WHITE);
+        table.setSelectionBackground(new Color(230, 240, 255));
+        table.setSelectionForeground(Color.BLACK);
 
+        // Header styling
+        table.getTableHeader().setFont(ColorPalette.FONT_SUBHEADER);
+        table.getTableHeader().setBackground(Color.WHITE);
+        table.getTableHeader().setForeground(Color.BLACK);
+        table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(220, 220, 220)));
+        table.getTableHeader().setReorderingAllowed(false);
+
+        // Center alignment untuk semua kolom
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+        centerRenderer.setBorder(BorderFactory.createMatteBorder(0, 1, 1, 1, new Color(220, 220, 220)));
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        // Set column widths
+        table.getColumnModel().getColumn(0).setPreferredWidth(150); // Waktu
+        table.getColumnModel().getColumn(1).setPreferredWidth(120); // Username
+        table.getColumnModel().getColumn(2).setPreferredWidth(100); // Aksi
+        table.getColumnModel().getColumn(3).setPreferredWidth(250); // Detail
 
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(null);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
+        scrollPane.getViewport().setBackground(Color.WHITE);
 
         panel.add(scrollPane, BorderLayout.CENTER);
 

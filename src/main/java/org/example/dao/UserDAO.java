@@ -1,189 +1,157 @@
 package org.example.dao;
 
 import org.example.model.User;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Data Access Object untuk manage data User
- */
 public class UserDAO {
 
     private static final String FILE_PATH = "data/users.csv";
-    private static final String HEADER = "username,password,nama_lengkap,role,tanggal_daftar";
+    private static final String EXCEL_PATH = "data/users.xlsx";
+    private static final String HEADER =
+            "username,password,nama_lengkap,role,tanggal_daftar";
 
-    /**
-     * Baca semua data user dari file
-     */
+    // ================= GET ALL USERS =================
     public List<User> getAllUsers() {
-        List<User> userList = new ArrayList<>();
+        List<User> users = new ArrayList<>();
         File file = new File(FILE_PATH);
 
-        // Jika file tidak ada, buat file dengan user default (admin)
         if (!file.exists()) {
             createDefaultUser();
         }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
-            String line = reader.readLine(); // Skip header
+            reader.readLine(); // skip header
+            String line;
 
             while ((line = reader.readLine()) != null) {
-                if (line.trim().isEmpty()) continue;
-
-                User user = User.fromCSV(line);
-                if (user != null) {
-                    userList.add(user);
+                if (!line.trim().isEmpty()) {
+                    User user = User.fromCSV(line);
+                    if (user != null) {
+                        users.add(user);
+                    }
                 }
             }
-
         } catch (IOException e) {
-            System.err.println("Error reading users file: " + e.getMessage());
+            System.err.println("Error read users: " + e.getMessage());
         }
 
-        return userList;
+        return users;
     }
 
-    /**
-     * Simpan semua data user ke file
-     */
-    public boolean saveAllUsers(List<User> userList) {
+    // ================= SAVE USERS =================
+    public boolean saveAllUsers(List<User> users) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_PATH))) {
-            // Write header
             writer.println(HEADER);
+            for (User u : users) {
+                if (u != null) {
+                    writer.println(u.toCSV());
+                }
+            }
+            saveToExcel(users);
+            return true;
+        } catch (IOException e) {
+            System.err.println("Gagal simpan users: " + e.getMessage());
+            return false;
+        }
+    }
 
-            // Write data
-            for (User user : userList) {
-                writer.println(user.toCSV());
+    // ================= SAVE TO EXCEL =================
+    private void saveToExcel(List<User> users) {
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Users");
+
+            Row header = sheet.createRow(0);
+            String[] cols = {"Username", "Nama Lengkap", "Role", "Tanggal Daftar"};
+
+            for (int i = 0; i < cols.length; i++) {
+                header.createCell(i).setCellValue(cols[i]);
             }
 
-            return true;
+            int rowNum = 1;
+            for (User u : users) {
+                if (u == null) continue;
+
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(u.getUsername());
+                row.createCell(1).setCellValue(u.getNamaLengkap());
+                row.createCell(2).setCellValue(u.getRole());
+                row.createCell(3).setCellValue(u.getTanggalDaftar().toString());
+            }
+
+            File dir = new File("data");
+            if (!dir.exists()) dir.mkdirs();
+
+            try (FileOutputStream out = new FileOutputStream(EXCEL_PATH)) {
+                workbook.write(out);
+            }
 
         } catch (IOException e) {
-            System.err.println("Error saving users file: " + e.getMessage());
-            return false;
+            System.err.println("Excel users gagal: " + e.getMessage());
         }
     }
 
-    /**
-     * Validasi login
-     * @return User jika berhasil, null jika gagal
-     */
+    // ================= LOGIN =================
     public User validateLogin(String username, String password) {
-        List<User> userList = getAllUsers();
+        if (username == null || password == null) return null;
 
-        for (User user : userList) {
-            if (user.getUsername().equalsIgnoreCase(username) &&
-                    user.getPassword().equals(password)) {
-                return user;
+        for (User u : getAllUsers()) {
+            if (u != null &&
+                    u.getUsername().equalsIgnoreCase(username) &&
+                    u.getPassword().equals(password)) {
+                return u;
             }
         }
-
-        return null; // Login gagal
-    }
-
-    /**
-     * Cek apakah username sudah ada
-     */
-    public boolean isUsernameExists(String username) {
-        List<User> userList = getAllUsers();
-
-        for (User user : userList) {
-            if (user.getUsername().equalsIgnoreCase(username)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Register user baru
-     */
-    public boolean registerUser(User newUser) {
-        // Cek duplikat username
-        if (isUsernameExists(newUser.getUsername())) {
-            return false;
-        }
-
-        List<User> userList = getAllUsers();
-        userList.add(newUser);
-
-        return saveAllUsers(userList);
-    }
-
-    /**
-     * Get user berdasarkan username
-     */
-    public User getUserByUsername(String username) {
-        List<User> userList = getAllUsers();
-
-        for (User user : userList) {
-            if (user.getUsername().equalsIgnoreCase(username)) {
-                return user;
-            }
-        }
-
         return null;
     }
 
-    /**
-     * Update user
-     */
-    public boolean updateUser(String username, User updatedUser) {
-        List<User> userList = getAllUsers();
-        boolean found = false;
+    // ================= REGISTER =================
+    public boolean registerUser(User user) {
+        if (user == null || user.getUsername() == null) {
+            return false;
+        }
 
-        for (int i = 0; i < userList.size(); i++) {
-            if (userList.get(i).getUsername().equalsIgnoreCase(username)) {
-                userList.set(i, updatedUser);
-                found = true;
-                break;
+        if (getUserByUsername(user.getUsername()) != null) {
+            return false;
+        }
+
+        List<User> users = getAllUsers();
+        users.add(user);
+        return saveAllUsers(users);
+    }
+
+    // ================= FIND USER =================
+    public User getUserByUsername(String username) {
+        if (username == null) return null;
+
+        for (User u : getAllUsers()) {
+            if (u != null && u.getUsername().equalsIgnoreCase(username)) {
+                return u;
             }
         }
-
-        if (found) {
-            return saveAllUsers(userList);
-        }
-
-        return false;
+        return null;
     }
 
-    /**
-     * Delete user
-     */
-    public boolean deleteUser(String username) {
-        List<User> userList = getAllUsers();
-        boolean removed = userList.removeIf(u -> u.getUsername().equalsIgnoreCase(username));
-
-        if (removed) {
-            return saveAllUsers(userList);
-        }
-
-        return false;
-    }
-
-    /**
-     * Buat user default (admin) saat pertama kali
-     */
+    // ================= DEFAULT ADMIN =================
     private void createDefaultUser() {
-        File directory = new File("data");
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-
+        new File("data").mkdirs();
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_PATH))) {
             writer.println(HEADER);
-
-            // User default: admin
-            User admin = new User("admin", "admin123", "Administrator", "Admin", LocalDate.now());
+            User admin = new User(
+                    "admin",
+                    "admin123",
+                    "Administrator",
+                    "Admin",
+                    LocalDate.now()
+            );
             writer.println(admin.toCSV());
-
-            System.out.println("Default user created - Username: admin, Password: admin123");
-
         } catch (IOException e) {
-            System.err.println("Error creating users file: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

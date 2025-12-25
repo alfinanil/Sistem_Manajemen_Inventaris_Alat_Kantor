@@ -63,7 +63,7 @@ public class FormBarangFrame extends JFrame {
         headerPanel.setPreferredSize(new Dimension(0, 70));
         headerPanel.setBorder(new EmptyBorder(0, 20, 0, 20));
 
-        JLabel titleLabel = new JLabel(existingBarang == null ? "➕ TAMBAH BARANG" : "✏️ EDIT BARANG");
+        JLabel titleLabel = new JLabel(existingBarang == null ? "TAMBAH BARANG" : "EDIT BARANG");
         titleLabel.setFont(ColorPalette.FONT_HEADER);
         titleLabel.setForeground(ColorPalette.TEXT_WHITE);
         headerPanel.add(titleLabel);

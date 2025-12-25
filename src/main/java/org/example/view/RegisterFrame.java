@@ -267,7 +267,7 @@ public class RegisterFrame extends JFrame {
             return;
         }
 
-        if (userDAO.isUsernameExists(user)) {
+        if (userDAO.registerUser(User.fromCSV(user))) {
             errorLabel.setText("Username sudah terdaftar");
             return;
         }
