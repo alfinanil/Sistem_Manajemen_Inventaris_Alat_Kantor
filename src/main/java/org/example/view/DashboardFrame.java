@@ -330,7 +330,7 @@ public class DashboardFrame extends JFrame {
     }
 
     private void openTambahEdit() {
-        new FormBarangFrame().setVisible(true);
+        new FormBarangFrame(null).setVisible(true);
         dispose();
     }
 
