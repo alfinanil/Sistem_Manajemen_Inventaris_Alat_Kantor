@@ -18,9 +18,8 @@ public class FormBarangFrame extends JFrame {
 
     private BarangDAO barangDAO;
     private HistoryDAO historyDAO;
-    private Barang existingBarang; // Null jika mode tambah, ada objek jika mode edit
+    private Barang existingBarang;
 
-    // Components
     private JTextField txtKode;
     private JTextField txtNama;
     private JComboBox<String> cbKategori;
@@ -39,7 +38,6 @@ public class FormBarangFrame extends JFrame {
         if (barang != null) {
             fillForm(barang);
         } else {
-            // Mode Tambah: Generate Kode Otomatis
             txtKode.setText(barangDAO.generateKodeBarang());
             txtKode.setEditable(false);
             txtTanggal.setText(LocalDate.now().toString());
@@ -57,7 +55,6 @@ public class FormBarangFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(ColorPalette.BG_LIGHT);
 
-        // Header
         JPanel headerPanel = new JPanel();
         headerPanel.setBackground(ColorPalette.PRIMARY_COLOR);
         headerPanel.setPreferredSize(new Dimension(0, 70));
@@ -68,11 +65,9 @@ public class FormBarangFrame extends JFrame {
         titleLabel.setForeground(ColorPalette.TEXT_WHITE);
         headerPanel.add(titleLabel);
 
-        // Center wrapper untuk form
         JPanel centerWrapper = new JPanel(new GridBagLayout());
         centerWrapper.setBackground(ColorPalette.BG_LIGHT);
 
-        // Form Panel dengan lebar terbatas dan center alignment
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
         formPanel.setBackground(ColorPalette.BG_WHITE);
@@ -80,7 +75,6 @@ public class FormBarangFrame extends JFrame {
         formPanel.setPreferredSize(new Dimension(600, 620));
         formPanel.setMaximumSize(new Dimension(600, 620));
 
-        // Input fields
         formPanel.add(createInputRow("Kode Barang", txtKode = createTextField()));
         formPanel.add(Box.createVerticalStrut(15));
 
@@ -168,31 +162,28 @@ public class FormBarangFrame extends JFrame {
         formPanel.add(createInputRow("Keterangan", txtKeterangan = createTextField()));
         formPanel.add(Box.createVerticalStrut(25));
 
-        // Buttons
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 15, 0));
         buttonPanel.setMaximumSize(new Dimension(450, 45));
         buttonPanel.setPreferredSize(new Dimension(450, 45));
         buttonPanel.setOpaque(false);
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton btnSave = new JButton("💾 Simpan");
-        styleButton(btnSave, ColorPalette.SUCCESS_COLOR);
+        JButton btnSave = new JButton("Simpan");
+        styleButton(btnSave, ColorPalette.BUTTON_PRIMARY);
         btnSave.addActionListener(e -> handleSave());
 
-        JButton btnCancel = new JButton("❌ Batal");
-        styleButton(btnCancel, ColorPalette.DANGER_COLOR);
+        JButton btnCancel = new JButton("Batal");
+        styleButton(btnCancel, ColorPalette.TABLE_SELECTION);
         btnCancel.addActionListener(e -> handleCancel());
 
         buttonPanel.add(btnSave);
         buttonPanel.add(btnCancel);
         formPanel.add(buttonPanel);
 
-        // Tambahkan form panel ke center wrapper
         centerWrapper.add(formPanel);
 
         mainPanel.add(headerPanel, BorderLayout.NORTH);
 
-        // Tambahkan scroll pane untuk form
         JScrollPane scrollPane = new JScrollPane(centerWrapper);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -244,11 +235,9 @@ public class FormBarangFrame extends JFrame {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                // Background rounded
                 g2.setColor(getBackground());
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 25, 25);
 
-                // Border rounded
                 g2.setColor(ColorPalette.SECONDARY_COLOR);
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 25, 25);
 
@@ -273,12 +262,10 @@ public class FormBarangFrame extends JFrame {
         button.setBorderPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // Membuat tombol rounded
         button.setBorder(new EmptyBorder(12, 20, 12, 20));
         button.setOpaque(false);
         button.setContentAreaFilled(false);
 
-        // Override paint untuk membuat rounded corners
         button.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             public void paint(Graphics g, JComponent c) {
