@@ -39,8 +39,8 @@ public class LoginFrame extends JFrame {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g;
                 GradientPaint gp = new GradientPaint(
-                        0, 0, new Color(200, 210, 225),
-                        0, getHeight(), new Color(225, 235, 245)
+                        0, 0, new Color(0, 29, 57),
+                        0, getHeight(), new Color(223, 240, 248)
                 );
                 g2.setPaint(gp);
                 g2.fillRect(0, 0, getWidth(), getHeight());
@@ -88,7 +88,7 @@ public class LoginFrame extends JFrame {
 
                 int radius = 42;
 
-                g2.setColor(new Color(75, 85, 105));
+                g2.setColor(new Color(109, 148, 197));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight() + radius, radius, radius);
                 g2.fillRect(0, radius, getWidth(), getHeight());
             }
@@ -210,7 +210,7 @@ public class LoginFrame extends JFrame {
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                g2.setColor(new Color(75, 85, 105));
+                g2.setColor(new Color(109, 148, 197));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
 
                 g2.setColor(Color.WHITE);
