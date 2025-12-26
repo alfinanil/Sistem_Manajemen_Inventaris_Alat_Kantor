@@ -45,13 +45,12 @@ public class DashboardFrame extends JFrame {
         mainPanel.add(createSidebar(), BorderLayout.WEST);
 
         contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setBackground(new Color(240, 242, 245));
+        contentPanel.setBackground(new Color(223, 240, 248));
         mainPanel.add(contentPanel, BorderLayout.CENTER);
 
         add(mainPanel);
     }
 
-    /* ================= SIDEBAR ================= */
 
     private JButton createMenuButton(String text, String iconPath) {
         JButton button = new JButton(text);
@@ -61,8 +60,8 @@ public class DashboardFrame extends JFrame {
         button.setIconTextGap(12);
 
         button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        button.setForeground(Color.WHITE);
-        button.setBackground(new Color(44, 56, 74));
+        button.setForeground(Color.BLACK);
+        button.setBackground(new Color(203, 220, 235));
 
         button.setFocusPainted(false);
         button.setBorderPainted(false);
@@ -74,10 +73,10 @@ public class DashboardFrame extends JFrame {
         // Hover effect
         button.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(59, 130, 246));
+                button.setBackground(new Color(69, 127, 181));
             }
             public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(44, 56, 74));
+                button.setBackground(new Color(203, 220, 235));
             }
         });
 
@@ -87,7 +86,7 @@ public class DashboardFrame extends JFrame {
     private JPanel createSidebar() {
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
-        sidebar.setBackground(new Color(44, 56, 74));
+        sidebar.setBackground(new Color(203, 220, 235));
         sidebar.setPreferredSize(new Dimension(200, 750));
         sidebar.setBorder(new EmptyBorder(20, 0, 20, 0));
 
@@ -218,7 +217,6 @@ public class DashboardFrame extends JFrame {
         ));
     }
 
-    /* ================= TABLE ================= */
 
     private JPanel createRecentInventoryTable() {
         JPanel section = new JPanel();
